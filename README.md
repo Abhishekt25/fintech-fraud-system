@@ -1,4 +1,4 @@
-# 🛡️ FraudSentinel — Real-Time Fraud Detection System
+#  FraudSentinel — Real-Time Fraud Detection System
 
 ## Overview
 
@@ -34,7 +34,7 @@ This project demonstrates backend system design, real-time architecture, and sca
 
 ---
 
-## ⚙️ Setup Instructions
+## Setup Instructions
 
 ### 1. Database Setup
 
@@ -99,7 +99,7 @@ Backend (Express)
 
 ---
 
-## ⚡ Transaction Processing Flow
+##  Transaction Processing Flow
 
 1. Incoming transaction received via API
 2. Duplicate check (Redis / memory)
@@ -200,25 +200,3 @@ This may trigger:
 * Large Transaction → FLAG
 * Suspicious Category → FLAG
 
----
-
-## 🧩 Key Design Decisions
-
-* **Redis optional fallback** → system works even without Redis
-* **Sliding window logic** → efficient fraud pattern detection
-* **EMA risk scoring** → smooth risk evolution over time
-* **Hot rule reload** → no downtime for rule updates
-* **WebSocket-first updates** → real-time UX
-
-
-
----
-
-##  Author
-
-Built as part of a technical assignment to demonstrate:
-
-* Backend system design
-* Real-time data handling
-* Scalable architecture
-* Clean API design
