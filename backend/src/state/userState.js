@@ -12,12 +12,12 @@ export async function getUserStats(userId) {
   const txKey = `user:${userId}:txs`;
 
   // Upstash: zrangebyscore returns array of members
-  const recentTxJson = await redis.zrangeByScore(txKey, oneHourAgo, now);
+  const recentTxJson = await redis.zrangebyscore(txKey, oneHourAgo, now);
   const recentTxs = (recentTxJson || [])
     .map(t => { try { return typeof t === 'string' ? JSON.parse(t) : t; } catch { return null; } })
     .filter(Boolean);
 
-  const dayTxJson = await redis.zrangeByScore(txKey, oneDayAgo, now);
+  const dayTxJson = await redis.zrangebyscore(txKey, oneDayAgo, now);
   const dayTxs = (dayTxJson || [])
     .map(t => { try { return typeof t === 'string' ? JSON.parse(t) : t; } catch { return null; } })
     .filter(Boolean);
