@@ -5,7 +5,7 @@ import { formatCurrency, formatTime, timeAgo } from '../../utils/helpers'
 import { StatusBadge, EmptyState } from '../shared/Layout'
 import { RiskBadge } from '../shared/RiskBar'
 import {
-  ArrowRightLeft, ChevronDown, ChevronUp, Shield, CheckCircle, AlertTriangle
+  ArrowRightLeft, ChevronDown, ChevronUp, Shield, CheckCircle
 } from 'lucide-react'
 
 const FILTERS = ['ALL', 'FLAGGED', 'BLOCKED', 'APPROVED']
@@ -47,7 +47,8 @@ export function TransactionFeed({ maxRows, compact = false }) {
           <ArrowRightLeft className="w-4 h-4 text-accent-cyan" />
           <span className="font-display font-semibold text-sm text-white">Live Transaction Feed</span>
         </div>
-        {/* Filter tabs */}
+
+        {/* Filters */}
         <div className="flex items-center gap-1">
           {FILTERS.map(f => (
             <button
@@ -62,13 +63,17 @@ export function TransactionFeed({ maxRows, compact = false }) {
               {f === 'FLAGGED' ? (
                 <span className="flex items-center gap-1.5">
                   FLAGGED {counts.FLAGGED > 0 && (
-                    <span className="bg-amber-500 text-black text-xs rounded-full px-1.5 py-0 font-mono">{counts.FLAGGED}</span>
+                    <span className="bg-amber-500 text-black text-xs rounded-full px-1.5 py-0 font-mono">
+                      {counts.FLAGGED}
+                    </span>
                   )}
                 </span>
               ) : f === 'BLOCKED' ? (
                 <span className="flex items-center gap-1.5">
                   BLOCKED {counts.BLOCKED > 0 && (
-                    <span className="bg-red-500 text-white text-xs rounded-full px-1.5 py-0 font-mono">{counts.BLOCKED}</span>
+                    <span className="bg-red-500 text-white text-xs rounded-full px-1.5 py-0 font-mono">
+                      {counts.BLOCKED}
+                    </span>
                   )}
                 </span>
               ) : f}
@@ -77,9 +82,9 @@ export function TransactionFeed({ maxRows, compact = false }) {
         </div>
       </div>
 
-      {/* Table Header */}
+      {/* Header (hidden on mobile) */}
       {!compact && (
-        <div className="grid grid-cols-[100px_1fr_120px_180px_120px_80px] gap-2 px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-surface-600 bg-surface-900/30">
+        <div className="hidden md:grid grid-cols-[100px_1fr_120px_180px_120px_80px] gap-2 px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-surface-600 bg-surface-900/30">
           <div>Status</div>
           <div>Merchant</div>
           <div>Amount</div>
@@ -115,19 +120,21 @@ export function TransactionFeed({ maxRows, compact = false }) {
 }
 
 function TxRow({ tx, compact, expanded, onExpand, onOverride, overriding }) {
-  const rowClass = tx.status === 'FLAGGED'
-    ? 'tx-row-flagged'
-    : tx.status === 'BLOCKED'
-    ? 'tx-row-blocked'
-    : 'tx-row-approved'
+  const rowClass =
+    tx.status === 'FLAGGED'
+      ? 'tx-row-flagged'
+      : tx.status === 'BLOCKED'
+      ? 'tx-row-blocked'
+      : 'tx-row-approved'
 
-  const flaggedRules = typeof tx.flagged_rules === 'string'
-    ? JSON.parse(tx.flagged_rules || '[]')
-    : (tx.flagged_rules || [])
+  const flaggedRules =
+    typeof tx.flagged_rules === 'string'
+      ? JSON.parse(tx.flagged_rules || '[]')
+      : tx.flagged_rules || []
 
   if (compact) {
     return (
-      <div className={`flex items-center gap-3 px-4 py-2.5 border-b border-surface-700/50 hover:bg-surface-700/30 transition-colors ${rowClass} animate-fade-in`}>
+      <div className={`flex items-center gap-3 px-4 py-2.5 border-b border-surface-700/50 hover:bg-surface-700/30 transition-colors ${rowClass}`}>
         <StatusBadge status={tx.status} override={tx.analyst_override} />
         <div className="flex-1 min-w-0">
           <div className="text-xs font-medium text-white truncate">{tx.merchant}</div>
@@ -144,121 +151,134 @@ function TxRow({ tx, compact, expanded, onExpand, onOverride, overriding }) {
 
   return (
     <>
+      {/* Responsive Row */}
       <div
-        className={`grid grid-cols-[100px_1fr_120px_180px_120px_80px] gap-2 px-4 py-3.5 border-b border-surface-700/40
-          hover:bg-surface-700/20 transition-colors cursor-pointer group ${rowClass} animate-fade-in`}
+        className={`
+          flex flex-col gap-2 px-4 py-3 border-b border-surface-700/40
+          md:grid md:grid-cols-[100px_1fr_120px_180px_120px_80px] md:gap-2 md:items-center md:py-3.5
+          hover:bg-surface-700/20 transition-colors cursor-pointer group
+          ${rowClass}
+        `}
         onClick={onExpand}
       >
-        <div className="flex items-center">
-          <StatusBadge status={tx.status} override={tx.analyst_override} />
+        {/* Top Row (mobile) */}
+        <div className="flex items-center justify-between md:contents">
+          <div className="flex items-center gap-2">
+            <StatusBadge status={tx.status} override={tx.analyst_override} />
+            <span className="font-mono text-sm font-semibold text-white md:hidden">
+              {formatCurrency(tx.amount)}
+            </span>
+          </div>
+
+          <div className="md:hidden">
+            {expanded
+              ? <ChevronUp className="w-4 h-4 text-slate-500" />
+              : <ChevronDown className="w-4 h-4 text-slate-600" />}
+          </div>
         </div>
+
+        {/* Merchant */}
         <div className="min-w-0 flex items-center">
           <div>
             <div className="text-sm font-medium text-white truncate">{tx.merchant}</div>
             <div className="text-xs text-slate-500 truncate">{tx.user_name} · {tx.category}</div>
           </div>
         </div>
-        <div className="flex items-center">
-          <span className="font-mono text-sm font-semibold text-white">{formatCurrency(tx.amount)}</span>
+
+        {/* Amount (desktop only) */}
+        <div className="hidden md:flex items-center">
+          <span className="font-mono text-sm font-semibold text-white">
+            {formatCurrency(tx.amount)}
+          </span>
         </div>
+
+        {/* Location / Time */}
         <div className="flex items-center">
           <div>
             <div className="text-xs text-slate-300">{tx.country}</div>
-            <div className="text-xs text-slate-500 font-mono">{formatTime(tx.created_at)}</div>
+            <div className="text-xs text-slate-500 font-mono">
+              {formatTime(tx.created_at)}
+            </div>
           </div>
         </div>
+
+        {/* Risk */}
         <div className="flex items-center">
           <RiskBadge score={tx.risk_score || 0} />
         </div>
-        <div className="flex items-center justify-end">
+
+        {/* Expand icon desktop */}
+        <div className="hidden md:flex items-center justify-end">
           {expanded
             ? <ChevronUp className="w-4 h-4 text-slate-500" />
             : <ChevronDown className="w-4 h-4 text-slate-600 group-hover:text-slate-400" />}
         </div>
       </div>
 
-      {/* Expanded detail */}
+      {/* Expanded */}
       {expanded && (
-        <div className="border-b border-surface-600 bg-surface-900/50 px-6 py-4 animate-fade-in">
-          <div className="grid grid-cols-3 gap-6">
-            {/* Transaction details */}
+        <div className="border-b border-surface-600 bg-surface-900/50 px-4 lg:px-6 py-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+
+            {/* Transaction */}
             <div>
-              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Transaction</div>
+              <div className="text-xs font-semibold text-slate-500 mb-2">Transaction</div>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">ID</span>
-                  <span className="font-mono text-slate-300 truncate ml-2">{tx.id?.substring(0, 16)}…</span>
+                  <span>ID</span>
+                  <span className="font-mono">{tx.id?.substring(0, 16)}…</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Device</span>
-                  <span className="font-mono text-slate-300">{tx.device_id || '—'}</span>
+                  <span>Device</span>
+                  <span>{tx.device_id || '—'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">IP</span>
-                  <span className="font-mono text-slate-300">{tx.ip_address || '—'}</span>
+                  <span>IP</span>
+                  <span>{tx.ip_address || '—'}</span>
                 </div>
-                {tx.analyst_override && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Override</span>
-                    <span className="text-accent-cyan font-medium">{tx.analyst_override}</span>
-                  </div>
-                )}
               </div>
             </div>
 
-            {/* Matched Rules */}
+            {/* Rules */}
             <div>
-              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+              <div className="text-xs font-semibold text-slate-500 mb-2">
                 Triggered Rules ({flaggedRules.length})
               </div>
               {flaggedRules.length === 0 ? (
                 <div className="text-xs text-slate-600">No rules triggered</div>
               ) : (
-                <div className="space-y-1.5">
-                  {flaggedRules.map((r, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <span className={`w-1.5 h-1.5 rounded-full ${r.action === 'BLOCK' ? 'bg-red-500' : 'bg-amber-500'}`} />
-                      <span className="text-xs text-slate-300">{r.name}</span>
-                      <span className="ml-auto text-xs font-mono text-slate-500">+{r.weight}</span>
-                    </div>
-                  ))}
-                </div>
+                flaggedRules.map((r, i) => (
+                  <div key={i} className="flex justify-between text-xs">
+                    <span>{r.name}</span>
+                    <span className="font-mono">+{r.weight}</span>
+                  </div>
+                ))
               )}
             </div>
 
-            {/* Analyst Actions */}
+            {/* Actions */}
             <div>
-              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Analyst Actions</div>
-              {tx.analyst_override ? (
-                <div className="text-xs text-slate-400 italic">Already overridden: {tx.analyst_override}</div>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  {tx.status !== 'APPROVED' && (
-                    <button
-                      onClick={() => onOverride(tx.id, 'SAFE')}
-                      disabled={overriding}
-                      className="btn-success text-xs py-1.5"
-                    >
-                      <CheckCircle className="w-3.5 h-3.5" />
-                      Mark Safe
-                    </button>
-                  )}
-                  {tx.status !== 'BLOCKED' && (
-                    <button
-                      onClick={() => onOverride(tx.id, 'BLOCK')}
-                      disabled={overriding}
-                      className="btn-danger text-xs py-1.5"
-                    >
-                      <Shield className="w-3.5 h-3.5" />
-                      Force Block
-                    </button>
-                  )}
-                </div>
-              )}
-              {tx.analyst_note && (
-                <div className="mt-2 text-xs text-slate-500 italic">"{tx.analyst_note}"</div>
-              )}
+              <div className="text-xs font-semibold text-slate-500 mb-2">Actions</div>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => onOverride(tx.id, 'SAFE')}
+                  disabled={overriding}
+                  className="btn-success text-xs py-1.5"
+                >
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  Mark Safe
+                </button>
+                <button
+                  onClick={() => onOverride(tx.id, 'BLOCK')}
+                  disabled={overriding}
+                  className="btn-danger text-xs py-1.5"
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                  Force Block
+                </button>
+              </div>
             </div>
+
           </div>
         </div>
       )}

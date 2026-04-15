@@ -13,11 +13,11 @@ const navItems = [
   { to: '/create-trans', label: 'Create Transaction', icon: PlusCircle },
 ]
 
-export function Sidebar() {
+export function Sidebar({ onNavClick }) {
   const { wsConnected, wsReconnecting, stats } = useStore()
 
   return (
-    <aside className="w-60 shrink-0 flex flex-col bg-surface-800 border-r border-surface-600 h-screen sticky top-0">
+    <aside className="w-60 shrink-0 flex flex-col bg-surface-800 border-r border-surface-600 h-screen">
       {/* Logo */}
       <div className="px-5 py-5 border-b border-surface-600">
         <div className="flex items-center gap-2.5">
@@ -25,7 +25,7 @@ export function Sidebar() {
             <Activity className="w-4 h-4 text-accent-cyan" />
           </div>
           <div>
-            <div className="font-display text-sm font-bold text-white tracking-wide">FraudSentinel</div>
+            <div className="font-display text-sm font-bold text-white tracking-wide">FintechFraud</div>
             <div className="text-xs text-slate-500 font-mono">v1.0 · LIVE</div>
           </div>
         </div>
@@ -38,6 +38,7 @@ export function Sidebar() {
             key={to}
             to={to}
             end={exact}
+            onClick={onNavClick}  // ← only addition
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group ${
                 isActive
@@ -61,7 +62,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Connection status */}
+      {/* Connection status — unchanged */}
       <div className="px-4 py-4 border-t border-surface-600">
         <div className={`flex items-center gap-2 text-xs ${wsConnected ? 'text-emerald-400' : wsReconnecting ? 'text-amber-400' : 'text-red-400'}`}>
           {wsConnected ? (

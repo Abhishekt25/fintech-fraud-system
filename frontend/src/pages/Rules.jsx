@@ -3,7 +3,7 @@ import { RuleEngine } from '../components/rules/RuleEngine'
 
 export default function RulesPage() {
   return (
-    <div className="p-6">
+    <div className="p-4 lg:p-6">
       <PageHeader
         title="Rule Engine"
         subtitle="Dynamically configurable fraud detection rules"

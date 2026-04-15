@@ -93,7 +93,7 @@ export default function CreateTransaction() {
   const selectedUser = users.find(u => u.id === form.user_id)
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-4 lg:p-6 max-w-5xl mx-auto max-w-5xl mx-auto">
       <PageHeader
         title="Create Transaction"
         subtitle="Inject a new transaction into the fraud detection pipeline"
@@ -200,7 +200,7 @@ export default function CreateTransaction() {
             </div>
 
             {/* Amount + Merchant */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1.5">Amount (USD) *</label>
                 <input
@@ -229,7 +229,7 @@ export default function CreateTransaction() {
             </div>
 
             {/* Category + Country */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1.5">Category</label>
                 <select className="select-field" value={form.category} onChange={e => set('category', e.target.value)}>
@@ -278,7 +278,7 @@ export default function CreateTransaction() {
           {/* Quick stats */}
           <div className="card p-5">
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Session Overview</div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
                 { label: 'Processed', value: stats.total, color: 'text-white' },
                 { label: 'Flagged', value: stats.flagged, color: 'text-amber-400' },

@@ -1,9 +1,9 @@
-# FraudSentinel — Real-Time Fraud Detection System
+# FintechFraud — Real-Time Fraud Detection System
 
 
 ##  Overview
 
-FraudSentinel is a "real-time fraud detection system" that simulates how modern fintech platforms detect and respond to suspicious transactions.
+FintechFraud is a "real-time fraud detection system" that simulates how modern fintech platforms detect and respond to suspicious transactions.
 
 It processes transactions through a "dynamic rule engine", assigns risk scores, and delivers "live updates via WebSockets" to an analyst dashboard.
 

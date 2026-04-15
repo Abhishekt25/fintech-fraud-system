@@ -164,8 +164,8 @@ function UserRow({ user, compact, expanded, onExpand, onFreeze, onResetRisk, loa
 
       {/* Expanded */}
       {expanded && (
-        <div className="border-b border-surface-600 bg-surface-900/50 px-6 py-4 animate-fade-in">
-          <div className="grid grid-cols-3 gap-6">
+        <div className="border-b border-surface-600 bg-surface-900/50 px-4 lg:px-6 py-4 animate-fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
             {/* Stats */}
             <div>
               <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Activity</div>

@@ -252,7 +252,7 @@ function RuleForm({ ruleId, existingRule, onClose, onSaved, onError }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs text-slate-500 mb-1.5">Rule Name *</label>
             <input
@@ -273,7 +273,7 @@ function RuleForm({ ruleId, existingRule, onClose, onSaved, onError }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-xs text-slate-500 mb-1.5">Action *</label>
             <select
@@ -327,7 +327,7 @@ function RuleForm({ ruleId, existingRule, onClose, onSaved, onError }) {
           </div>
           <div className="space-y-2">
             {form.conditions.map((cond, i) => (
-              <div key={i} className="grid grid-cols-[1fr_1fr_1fr_32px] gap-2 items-center">
+              <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_32px] gap-2 items-center">
                 <select
                   className="select-field text-xs"
                   value={cond.field}

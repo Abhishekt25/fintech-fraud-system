@@ -5,7 +5,7 @@ import { UserRiskMonitor } from '../components/users/UserRiskMonitor'
 
 export default function Dashboard() {
   return (
-    <div className="p-6">
+    <div className="p-4 lg:p-6">
       <PageHeader
         title="Dashboard"
         subtitle="Real-time transaction monitoring and risk overview"
@@ -14,7 +14,7 @@ export default function Dashboard() {
 
       <StatsGrid />
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-5">
+     <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-5">
         <TransactionFeed maxRows={12} />
         <UserRiskMonitor maxRows={8} compact />
       </div>
