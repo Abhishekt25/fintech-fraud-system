@@ -1,9 +1,17 @@
 import { create } from 'zustand'
 
-// Use env var for WS URL - falls back to same host
-const WS_URL = import.meta.env.VITE_API_URL
-  ? `ws://${new URL(import.meta.env.VITE_API_URL).host}/ws`
-  : `ws://${window.location.hostname}:3001/ws`
+const getWSUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    const url = new URL(import.meta.env.VITE_API_URL)
+    const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'
+    return `${protocol}//${url.host}/ws`
+  }
+
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+  return `${protocol}//${window.location.hostname}:3001/ws`
+}
+
+const WS_URL = getWSUrl()
 
 let wsInstance = null
 let reconnectTimer = null

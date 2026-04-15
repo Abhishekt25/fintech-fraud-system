@@ -1,50 +1,88 @@
-#  FraudSentinel — Real-Time Fraud Detection System
+# FraudSentinel — Real-Time Fraud Detection System
 
-## Overview
 
-FraudSentinel is a **real-time fraud detection system** designed to simulate how modern fintech platforms detect suspicious transactions.
+##  Overview
 
-It processes transactions through a **dynamic rule engine**, assigns risk scores, and provides **live updates via WebSockets** to an analyst dashboard.
+FraudSentinel is a "real-time fraud detection system" that simulates how modern fintech platforms detect and respond to suspicious transactions.
 
-This project demonstrates backend system design, real-time architecture, and scalable fraud detection logic.
+It processes transactions through a "dynamic rule engine", assigns risk scores, and delivers "live updates via WebSockets" to an analyst dashboard.
 
 ---
 
-## Key Capabilities
+## Live Demo
 
-* Real-time fraud detection pipeline
-* Dynamic rule engine (no server restart required)
-* Live updates via WebSockets
-* Analyst dashboard for monitoring and control
-* Risk scoring using exponential moving average (EMA)
-* Redis-backed performance optimizations (with fallback)
+* Frontend (Vercel): https://fintechabhishek.vercel.app
+* Backend (Render): https://fintech-fraud-system.onrender.com
+
+---
+
+## Deployment & Infrastructure
+
+| Service          | Provider                    |
+| ---------------- | --------------------------- |
+| Frontend Hosting | Vercel                      |
+| Backend Hosting  | Render                      |
+| Database         | Neon (PostgreSQL)           |
+| Cache / Redis    | Upstash                     |
+| Real-time        | WebSockets (WSS over HTTPS) |
+
+### Deployment Details
+
+* Frontend is deployed on "Vercel" for fast CDN delivery
+* Backend is hosted on "Render" as a Node.js web service
+* PostgreSQL database is managed via "Neon"
+* Redis caching and sliding window logic use "Upstash"
+* Secure communication:
+
+  * API → HTTPS
+  * WebSocket → WSS
+
+
+## Key Features
+
+* Real-time transaction processing
+* Dynamic rule engine (no restart required)
+* Live updates using WebSockets (WSS)
+* Analyst dashboard (users, rules, transactions)
+* Risk scoring using EMA (Exponential Moving Average)
+* Redis-based caching with in-memory fallback
 
 ---
 
 ## Tech Stack
 
-| Layer            | Tech                            |
-| ---------------- | ------------------------------- |
-| Frontend         | React 18 + Vite + Tailwind CSS  |
-| Backend          | Node.js + Express (ESM)         |
-| Database         | PostgreSQL                      |
-| Cache/State      | Redis (with in-memory fallback) |
-| Real-time        | WebSockets (`ws`)               |
-| State Management | Zustand                         |
+| Layer     | Tech                           |
+| --------- | ------------------------------ |
+| Frontend  | React 18 + Vite + Tailwind CSS |
+| Backend   | Node.js + Express              |
+| Database  | PostgreSQL (Neon)              |
+| Cache     | Redis (Upstash)                |
+| Real-time | WebSockets (ws)                |
+| State     | Zustand                        |
 
----
+
+
 
 ## Setup Instructions
 
-### 1. Database Setup
+## Architecture
 
-```sql
-CREATE DATABASE fintech_db;
+
+```
+Frontend (Vercel)
+   │
+   │ HTTPS + WSS
+   ▼
+Backend (Render)
+   │
+   ├── PostgreSQL (Neon DB)
+   └── Redis (Upstash)
 ```
 
 ---
 
-### 2. Backend Setup
+## Transaction Flow
+
 
 ```bash
 cd backend
@@ -82,7 +120,7 @@ npm run dev
 Frontend runs on:
 `http://localhost:5173`
 
----
+
 
 ## System Architecture
 
@@ -95,108 +133,84 @@ Backend (Express)
         │
         ├── PostgreSQL (persistent storage)
         └── Redis (cache + sliding windows)
-```
-
----
 
 ##  Transaction Processing Flow
 
-1. Incoming transaction received via API
+
+1. Transaction received via API
+>>>>>>> 0cf98f4 (websocket URL issues)
 2. Duplicate check (Redis / memory)
-3. User status validation (freeze check)
-4. Sliding window metrics calculation
-5. Rule engine evaluation (dynamic rules)
-6. Risk score calculation (EMA-based)
-7. Data persisted to PostgreSQL
-8. Real-time update sent via WebSocket
+3. User validation (freeze check)
+4. Sliding window calculations
+5. Rule engine evaluation
+6. Risk score calculation (EMA)
+7. Data stored in PostgreSQL
+8. Broadcast via WebSocket
 
 ---
 
 ## Rule Engine
 
-* Rules stored in database
-* Cached for 5 seconds
-* Auto-invalidated on update
-* Supports AND / OR conditions
-* Evaluates both:
+* Stored in database
+* Cached (5 seconds)
+* Auto-refresh on update
+* Supports AND / OR logic
+* Evaluates:
 
   * `transaction.*`
   * `user.*`
 
----
 
-##  API Endpoints
-
-### Transactions
-
-* `POST /api/transactions` — Submit transaction
-* `GET /api/transactions` — Fetch transactions
-* `PATCH /api/transactions/:id/override` — Analyst override
-
-### Users
-
-* `GET /api/users` — List users
-* `POST /api/users` — Create user
-* `PATCH /api/users/:id/freeze` — Freeze/unfreeze
-* `PATCH /api/users/:id/reset-risk` — Reset risk
-
-### Rules
-
-* `GET /api/rules` — List rules
-* `POST /api/rules` — Create rule
-* `PUT /api/rules/:id` — Update rule
-* `PATCH /api/rules/:id/toggle` — Enable/disable
-* `DELETE /api/rules/:id` — Delete
-
-### Stats
-
-* `GET /api/stats` — Dashboard metrics
-
----
 
 ## WebSocket
 
 ```
-ws://localhost:3001/ws
+wss://fintech-fraud-system.onrender.com/ws
 ```
 
 Broadcasts:
 
 * Transactions
-* Rule updates
 * User updates
+* Rule updates
 * Stats updates
 
----
 
-##  Default Fraud Rules
-
-| Priority | Rule                        | Action |
-| -------- | --------------------------- | ------ |
-| P100     | High risk user (score ≥ 80) | BLOCK  |
-| P95      | High risk countries         | BLOCK  |
-| P90      | High velocity transactions  | FLAG   |
-| P85      | Multi-country activity      | FLAG   |
-| P80      | Large transactions          | FLAG   |
-
----
-
-##  Example Transaction
-
-```json
-{
-  "user_id": "uuid",
-  "amount": 7500,
-  "merchant": "Binance",
-  "category": "crypto",
-  "country": "NK",
-  "device_id": "device-1"
-}
-```
-
-This may trigger:
+Triggers:
 
 * High Risk Country → BLOCK
 * Large Transaction → FLAG
 * Suspicious Category → FLAG
+
+
+## Environment Variables
+
+### Backend (Render)
+
+```env
+PORT=10000
+DATABASE_URL=<Neon PostgreSQL URL>
+UPSTASH_REDIS_REST_URL=<Upstash URL>
+UPSTASH_REDIS_REST_TOKEN=<Upstash Token>
+FRONTEND_URL=https://fintechabhishek.vercel.app
+NODE_ENV=production
+```
+
+---
+
+### Frontend (Vercel)
+
+```env
+VITE_API_URL=https://fintech-fraud-system.onrender.com
+```
+
+---
+
+## Key Design Decisions
+
+* Redis optional → system works without it
+* Sliding window → efficient fraud detection
+* EMA scoring → smooth risk updates
+* Hot rule reload → no downtime
+* WebSocket-first → real-time UX
 
